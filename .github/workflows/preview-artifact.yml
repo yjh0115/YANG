@@ -1,15 +1,20 @@
 name: Browser Preview Package
 
 on:
+  # A workflow introduced by a PR is not yet present on the default branch, so
+  # the push trigger bootstraps the first preview run for that work branch.
+  push:
+    branches-ignore: [main]
   pull_request:
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
 
 permissions:
   contents: read
   pull-requests: write
 
 concurrency:
-  group: preview-package-${{ github.event.pull_request.number }}
+  group: preview-package-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -20,7 +25,7 @@ jobs:
       - name: Check out the pull request
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Build a self-contained preview
         run: |
@@ -47,11 +52,14 @@ jobs:
         id: upload
         uses: actions/upload-artifact@v4
         with:
-          name: quad-lab-pr-${{ github.event.pull_request.number }}-preview
+          # run_id keeps bootstrap push artifacts uniquely identifiable before
+          # this workflow itself reaches the default branch.
+          name: quad-lab-preview-${{ github.run_id }}
           path: preview-package/
           retention-days: 7
 
       - name: Add preview instructions to the pull request
+        if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         env:
           ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}

@@ -11,7 +11,7 @@ GitHub Pages는 저장소당 하나의 사이트를 배포하는 기능입니다
 ## Preview 확인 방법
 
 1. Codex가 작업 브랜치에 변경 사항을 push하고 Pull Request를 생성합니다.
-2. PR의 **Checks** 탭에서 **Browser Preview Package / Create browser preview**가 초록색 체크가 될 때까지 기다립니다.
+2. PR의 **Checks** 탭에서 **Browser Preview Package / Create browser preview**가 초록색 체크가 될 때까지 기다립니다. workflow를 처음 추가하는 PR에서는 GitHub의 **Actions → Browser Preview Package**에서 작업 브랜치의 `push` 실행을 확인합니다.
 3. PR의 **Conversation** 탭으로 돌아갑니다.
 4. `github-actions` 봇 댓글에서 **Preview 다운로드**를 클릭합니다.
 5. 다운로드한 ZIP 파일의 압축을 풉니다.
@@ -19,6 +19,17 @@ GitHub Pages는 저장소당 하나의 사이트를 배포하는 기능입니다
 7. 실제 브라우저 화면을 확인한 후 문제가 없을 때만 PR을 `main`에 병합합니다.
 
 봇 댓글을 찾기 어렵다면 **Checks → Browser Preview Package → Create browser preview → Summary**에도 다운로드 링크가 있습니다.
+
+### workflow를 처음 추가하는 현재 PR
+
+GitHub의 `pull_request` workflow는 default branch에 workflow 파일이 아직 없을 때 첫 PR 이벤트를 놓칠 수 있습니다. 그래서 이 workflow는 `main`을 제외한 작업 브랜치의 `push`에서도 실행됩니다. 현재 PR에 이 수정 커밋이 올라가면 다음 순서로 확인합니다.
+
+1. 저장소 상단의 **Actions**를 클릭합니다.
+2. 왼쪽에서 **Browser Preview Package**를 클릭합니다.
+3. 작업 브랜치의 최신 실행을 클릭합니다.
+4. **Summary**의 **Preview ZIP 다운로드**를 클릭합니다.
+
+workflow가 이후 default branch에 포함되면 다음 PR부터는 기존 안내처럼 PR의 **Checks**와 봇 댓글에서도 확인할 수 있습니다.
 
 ## 자동 갱신과 정리
 
