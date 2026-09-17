@@ -1,0 +1,18 @@
+/* QUAD LAB visual refresh: keeps mathematical figures clear and legible. */
+:root{--bg:#fffaf2;--soft:#f3edff;--line:#e8dff2;--shadow:0 14px 36px rgba(93,69,135,.11)}
+body{background:radial-gradient(circle at 10% 10%,#fff0d9 0,transparent 32%),radial-gradient(circle at 95% 28%,#e9f8ee 0,transparent 30%),#fffaf2}
+.topbar,.lesson-top{background:#fffdf9;border-bottom-color:#e8dff2}
+.brand-mark{background:linear-gradient(145deg,#8366f3,#e59bc7);border-radius:14px;transform:rotate(-5deg)}
+.hero{position:relative}.hero:before{content:'✦  ✨  ✦';position:absolute;top:25px;right:7%;color:#d39cdb;font-size:22px;letter-spacing:20px;pointer-events:none;animation:quadFloat 4s ease-in-out infinite}.hero h1 em{background:linear-gradient(110deg,#7958e8,#e27aab);background-clip:text;-webkit-background-clip:text;color:transparent}
+.lesson-card,.lab-card,.prompt-card,.concept-card,.practice-card,.relation-card,.mission-question{border:2px solid #eee4f2;border-radius:25px;box-shadow:0 10px 25px rgba(97,75,133,.06)}
+.lesson-card:nth-child(6n+1){background:#fff4e8}.lesson-card:nth-child(6n+2){background:#eaf8ff}.lesson-card:nth-child(6n+3){background:#fff0f5}.lesson-card:nth-child(6n+4){background:#eaf9ef}.lesson-card:nth-child(6n+5){background:#f2eeff}.lesson-card:nth-child(6n){background:#fff7df}
+.lesson-card:before{content:'✦';position:absolute;right:22px;bottom:20px;font-size:22px;color:#d4b9ee;pointer-events:none}.lesson-card:hover{transform:translateY(-6px) rotate(-.4deg);box-shadow:0 18px 36px rgba(97,75,133,.13)}
+.progress-panel{background:linear-gradient(110deg,#57488d,#8261ac);border-radius:24px}.mission-banner{background:linear-gradient(115deg,#59458d,#a05d9a);border-radius:26px}.mission-icon{background:#ffffff20}
+.primary,.card-btn{border-radius:15px;transition:transform .2s,box-shadow .2s}.primary:hover,.card-btn:hover{transform:translateY(-2px)}.primary:focus-visible,.secondary:focus-visible,.choice:focus-visible,.tool-btn:focus-visible,.card-btn:focus-visible,.quiz-options button:focus-visible{outline:3px solid #e59b49;outline-offset:3px}
+.phase span:before{content:'✨ ';letter-spacing:normal}.tip{background:#fff0d8;border:1px solid #f4d8a4;border-radius:18px;font-size:14px}.tip b:before{content:'💡 '}
+.geometry{background-color:#fffefa;background-image:radial-gradient(circle,#e8e2f0 1px,transparent 1.5px)}.measure{font-size:16px}.measure small{font-size:12px}.concept-item{background:#faf6ff}.concept-item span{border-radius:9px;background:#eee6ff;color:#6042b0;font-weight:900}.seg{display:inline!important;white-space:nowrap!important;border:0!important;border-radius:0!important;background:transparent!important;color:inherit!important;box-shadow:none!important;padding:.14em 0 0!important;vertical-align:baseline!important}.seg::before{top:.06em!important;border-top:1.5px solid currentColor!important}
+.feedback{font-size:15px;border-radius:17px;padding:17px;animation:quadPop .32s ease-out}.feedback.good{background:#e3f8e9;border:1px solid #a5dfb4}.feedback.good:before{content:'🎉 정답! 정말 잘했어요!  ';font-weight:900}.feedback.bad{background:#fff2d9;border:1px solid #f2d5a0}.feedback.bad:before{content:'💪 좋은 시도예요! 다시 생각해 봐요.  ';font-weight:900}
+#toast{border-radius:16px;background:#55458a;font-size:15px;box-shadow:0 10px 25px #4a377c33}
+@keyframes quadFloat{50%{transform:translateY(-9px)}}@keyframes quadPop{0%{opacity:0;transform:scale(.96)}100%{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media(max-width:800px){.hero:before{display:none}.lesson-card:before{display:none}.measure{font-size:14px}}
