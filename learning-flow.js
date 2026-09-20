@@ -22,7 +22,7 @@ if(isMission){const result=document.getElementById('result'),grade=document.getE
 if(isHome){
  const navMap=document.getElementById('navMap');if(navMap)navMap.onclick=()=>{location.href='relation-map.html'};
  const navMission=document.getElementById('navMission');if(navMission)navMission.onclick=()=>{location.href='master-mission.html'};
- const bannerButton=document.getElementById('missionBannerBtn');if(bannerButton)bannerButton.onclick=()=>{location.href='master-mission.html'};
- const banner=document.querySelector('.mission-banner');if(banner&&!document.getElementById('mapProgressNote')){const p=document.createElement('p');p.id='mapProgressNote';p.style.cssText='margin:12px 0;font-weight:700';p.textContent=getDone()?'🧩 관계 지도 완료! 최종 미션에 도전해 보세요.':'🧩 6개 탐구 → 관계 지도 → 최종 미션 순서로 학습해 보세요.';banner.insertAdjacentElement('afterend',p)}
+ const bannerButton=document.getElementById('missionBannerBtn');if(bannerButton){bannerButton.disabled=false;bannerButton.textContent='10문제 최종 미션 도전 →';bannerButton.onclick=()=>{location.href='master-mission.html'}};
+ const banner=document.querySelector('.mission-banner');if(banner){const description=banner.querySelector('p');if(description)description.textContent='6개 탐구와 관계 지도를 마친 뒤 도전해 보세요. 복습을 위해 미션을 먼저 열 수도 있어요.';let note=document.getElementById('mapProgressNote');if(!note){note=document.createElement('p');note.id='mapProgressNote';note.style.cssText='margin:12px 0;font-weight:700';banner.insertAdjacentElement('afterend',note)}note.textContent=getDone()?'🧩 관계 지도 완료! 최종 미션에 도전해 보세요.':'🧩 추천 학습 순서: 6개 탐구 → 관계 지도 → 최종 미션';}
 }
 })();
