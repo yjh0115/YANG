@@ -11,10 +11,11 @@ const makeLink=(text,href)=>{const a=document.createElement('a');a.href=href;a.t
 if(isMap){
  const result=document.getElementById('result'),check=document.getElementById('check'),reveal=document.getElementById('reveal'),reset=document.getElementById('reset');
  if(result){const next=document.createElement('div');next.id='mapNextStep';next.setAttribute('aria-live','polite');next.style.cssText='margin-top:15px;padding:16px;border-radius:14px;background:#f0f9ef';result.insertAdjacentElement('afterend',next);
- const show=()=>{next.replaceChildren();const p=document.createElement('p');if(getDone()){p.textContent='🎉 관계 지도 학습을 완료했어요! 이제 10문제 최종 미션에 도전해 보세요.';next.append(p,makeLink('🏆 최종 미션으로 이동 →','master-mission.html'));}else{p.textContent='답 카드를 모두 채우고 정답 확인을 눌러 보세요. 완성 지도 보기는 복습용이며 학습 완료로 기록되지 않습니다.';next.append(p)}};
- check?.addEventListener('click',()=>{const blanks=[...document.querySelectorAll('.blank')];if(blanks.length&&blanks.every(b=>b.dataset.value===b.dataset.answer))setDone(true);show()});
- reveal?.addEventListener('click',show);
- reset?.addEventListener('click',show);
+ let revealed=false;
+ const show=()=>{next.replaceChildren();const p=document.createElement('p');if(getDone()){p.textContent='🎉 관계 지도 학습을 완료했어요! 이제 10문제 최종 미션에 도전해 보세요.';next.append(p,makeLink('🏆 최종 미션으로 이동 →','master-mission.html'));}else{p.textContent=revealed?'완성 지도를 확인했어요. 직접 풀어 완료하려면 다시 도전을 누른 뒤 답을 채우고 정답 확인을 눌러 주세요.':'답 카드를 모두 채우고 정답 확인을 눌러 보세요. 완성 지도 보기는 복습용이며 학습 완료로 기록되지 않습니다.';next.append(p)}};
+ check?.addEventListener('click',()=>{const blanks=[...document.querySelectorAll('.blank')];if(!revealed&&blanks.length&&blanks.every(b=>b.dataset.value===b.dataset.answer))setDone(true);show()});
+ reveal?.addEventListener('click',()=>{revealed=true;show()});
+ reset?.addEventListener('click',()=>{revealed=false;show()});
  show();}
 }
 if(isMission){const result=document.getElementById('result'),grade=document.getElementById('grade'),retry=document.getElementById('retry');if(result){const next=document.createElement('div');next.id='missionNextStep';result.insertAdjacentElement('afterend',next);grade?.addEventListener('click',()=>{next.replaceChildren();const p=document.createElement('p');p.textContent='수고했어요! 해설을 확인하고 복습하거나 학습 목록으로 돌아가세요.';next.append(p,makeLink('🧩 관계 지도 복습','relation-map.html'),makeLink('🏠 학습 목록으로','index.html'))});retry?.addEventListener('click',()=>next.replaceChildren())}}
