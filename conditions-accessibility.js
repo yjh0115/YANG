@@ -25,15 +25,13 @@ renderConditions=function(area){
   if(instruction)card.setAttribute('aria-describedby',instruction.id);
   card.addEventListener('click',()=>choose(card));
   card.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();choose(card);}});
-  // Replace the original dragstart handler so disabled cards cannot create a payload.
   card.ondragstart=event=>{dragged=null;if(card.parentElement===zone||complete()||!event.dataTransfer){event.preventDefault();return;}dragged=card;event.dataTransfer.setData('text',card.dataset.c);};
   card.addEventListener('dragend',()=>{dragged=null;});
  });
  const finishCard=card=>{card.draggable=false;card.tabIndex=-1;card.removeAttribute('role');card.removeAttribute('aria-pressed');card.removeAttribute('aria-label');card.removeAttribute('aria-describedby');};
- const finishActivity=()=>{if(!complete())return;remaining().forEach(card=>{card.draggable=false;card.tabIndex=-1;card.setAttribute('aria-disabled','true');card.removeAttribute('aria-pressed');});feedback.textContent+=' 올바른 조건 세 개를 모두 찾았어요. 다음 단계로 이동할 수 있어요.';nextStep()?.focus();};
- const focusNext=()=>{const next=remaining().find(item=>item.dataset.c!=='1')||remaining()[0];if(next)next.focus();};
+ const finishActivity=()=>{if(!complete())return;remaining().forEach(card=>{card.draggable=false;card.tabIndex=-1;card.setAttribute('aria-disabled','true');card.removeAttribute('aria-pressed');});feedback.textContent+=' 올바른 조건 세 개를 모두 찾았어요. 다음 단계로 이동할 수 있어요.';};
  const classify=card=>{if(!card||card.parentElement===zone||complete())return false;const ok=card.dataset.c!=='1';feedback.textContent=ok?'맞아요. 이 조건은 평행사변형을 보장해요.':'대각선의 길이가 같은 등변사다리꼴도 있어요. 반드시 평행사변형은 아니에요.';feedback.className=ok?'feedback good':'feedback bad';if(ok){zone.append(card);finishCard(card);}clear();if(complete())finishActivity();return ok;};
- add.addEventListener('click',()=>{if(!selected)return;classify(selected);if(!complete())focusNext();});
+ add.addEventListener('click',()=>{if(!selected)return;const card=selected;const ok=classify(card);if(complete()){nextStep()?.focus();return;}if(ok){remaining()[0]?.focus();}else{card.focus();}});
  zone.ondragover=event=>{if(dragged&&!complete())event.preventDefault();};
  // Accept only a drag started from an active card in this activity.
  zone.ondrop=event=>{event.preventDefault();const card=dragged;dragged=null;if(card&&card.dataset.c===event.dataTransfer?.getData('text'))classify(card);};
