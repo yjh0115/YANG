@@ -17,13 +17,15 @@ renderConditions=function(area){
  const nextStep=()=>area.closest('#lessonView')?.querySelector('#nextStep');
  const update=()=>{note.textContent=`올바른 조건 ${count()}/3개 분류 완료. ${complete()?'모든 올바른 조건을 찾았어요.':selected?'선택한 조건: '+selected.textContent:'카드를 선택해 주세요.'}`;};
  const clear=()=>{selected=null;cards.forEach(card=>{if(card.parentElement!==zone)card.setAttribute('aria-pressed','false');card.style.outline='';});add.disabled=true;update();};
- const choose=card=>{if(card.parentElement===zone||complete())return;selected=card;cards.forEach(item=>{const active=item===card;item.setAttribute('aria-pressed',String(active));item.style.outline=active?'3px solid #7652ca':'';});add.disabled=false;update();};
+ const choose=card=>{if(card.parentElement===zone||complete())return;selected=card;cards.forEach(item=>{if(item.parentElement!==zone)item.setAttribute('aria-pressed',String(item===card));item.style.outline=item===card?'3px solid #7652ca':'';});add.disabled=false;update();};
  cards.forEach(card=>{card.setAttribute('role','button');card.tabIndex=0;card.setAttribute('aria-pressed','false');card.setAttribute('aria-label',`조건 카드: ${card.textContent}`);card.addEventListener('click',()=>choose(card));card.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();choose(card);}});});
  const finishCard=card=>{card.draggable=false;card.tabIndex=-1;card.removeAttribute('role');card.removeAttribute('aria-pressed');card.removeAttribute('aria-label');};
  const finishActivity=()=>{if(!complete())return;remaining().forEach(card=>{card.draggable=false;card.tabIndex=-1;card.setAttribute('aria-disabled','true');});nextStep()?.focus();};
  const focusNext=()=>{const next=remaining().find(item=>item.dataset.c!=='1')||remaining()[0];if(next)next.focus();};
- add.addEventListener('click',()=>{if(!selected||complete())return;const card=selected,ok=card.dataset.c!=='1';feedback.textContent=ok?'맞아요. 이 조건은 평행사변형을 보장해요.':'대각선의 길이가 같은 등변사다리꼴도 있어요. 반드시 평행사변형은 아니에요.';feedback.className=ok?'feedback good':'feedback bad';if(ok){zone.append(card);finishCard(card);}clear();if(complete())finishActivity();else focusNext();});
- zone.addEventListener('drop',()=>{cards.filter(card=>card.parentElement===zone).forEach(finishCard);clear();if(complete())finishActivity();});
+ const classify=card=>{if(!card||card.parentElement===zone||complete())return false;const ok=card.dataset.c!=='1';feedback.textContent=ok?'맞아요. 이 조건은 평행사변형을 보장해요.':'대각선의 길이가 같은 등변사다리꼴도 있어요. 반드시 평행사변형은 아니에요.';feedback.className=ok?'feedback good':'feedback bad';if(ok){zone.append(card);finishCard(card);}clear();if(complete())finishActivity();return ok;};
+ add.addEventListener('click',()=>{if(!selected)return;classify(selected);if(!complete())focusNext();});
+ // Replace the original drop handler: reject empty/foreign payloads and already-classified cards.
+ zone.ondrop=event=>{event.preventDefault();const id=event.dataTransfer?.getData('text');const card=cards.find(item=>item.dataset.c===id);classify(card);};
  update();
 };
 })();
