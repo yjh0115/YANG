@@ -20,13 +20,14 @@ if(isMap){
 }
 if(isMission){
  const result=document.getElementById('result'),grade=document.getElementById('grade'),retry=document.getElementById('retry'),form=document.getElementById('mission');
- if(result&&!document.getElementById('missionNextStep')){
+ if(result&&form&&!document.getElementById('missionNextStep')){
   const next=document.createElement('div');next.id='missionNextStep';next.setAttribute('aria-live','polite');result.insertAdjacentElement('afterend',next);
   // Do not reveal answers or calculate a score while any question is unanswered.
   grade?.addEventListener('click',event=>{const questions=[...form.querySelectorAll('.question')];const unanswered=questions.filter(q=>!q.querySelector('input[type="radio"]:checked'));if(!unanswered.length)return;event.preventDefault();event.stopImmediatePropagation();next.replaceChildren();const p=document.createElement('p');p.textContent=`아직 ${unanswered.length}문제를 풀지 않았어요. 모든 문제의 답을 선택한 뒤 채점해 주세요.`;next.append(p);unanswered[0].querySelector('input[type="radio"]')?.focus();},true);
-  grade?.addEventListener('click',()=>{next.replaceChildren();const p=document.createElement('p');p.textContent='수고했어요! 해설을 확인하고 복습하거나 학습 목록으로 돌아가세요.';next.append(p,makeLink('🧩 관계 지도 복습','relation-map.html'),makeLink('🏠 학습 목록으로','index.html'))});
+  result.tabIndex=-1;
+  grade?.addEventListener('click',()=>{next.replaceChildren();const p=document.createElement('p');p.textContent='수고했어요! 해설을 확인하고 복습하거나 학습 목록으로 돌아가세요.';next.append(p,makeLink('🧩 관계 지도 복습','relation-map.html'),makeLink('🏠 학습 목록으로','index.html'));result.focus({preventScroll:true})});
   retry?.addEventListener('click',()=>next.replaceChildren());
-  form?.addEventListener('change',()=>{if(result.hidden)return;result.hidden=true;result.textContent='';form.querySelectorAll('.question').forEach(q=>q.classList.remove('checked','correct','wrong'));next.replaceChildren();const notice=document.createElement('p');notice.textContent='답을 변경했어요. 현재 답안으로 다시 채점해 주세요.';next.append(notice)});
+  form.addEventListener('change',()=>{if(result.hidden)return;result.hidden=true;result.textContent='';form.querySelectorAll('.question').forEach(q=>{q.classList.remove('checked','correct','wrong');q.querySelector('.status').textContent=''});next.replaceChildren();const notice=document.createElement('p');notice.textContent='답을 변경했어요. 현재 답안으로 다시 채점해 주세요.';next.append(notice)});
  }
 }
 if(isHome){
