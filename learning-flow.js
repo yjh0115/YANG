@@ -16,8 +16,9 @@ if(isMap){
  const bank=document.getElementById('bank');
  if(bank){
   const selection=document.createElement('p');selection.id='mapSelectionStatus';selection.setAttribute('role','status');selection.setAttribute('aria-live','polite');selection.textContent='답 카드를 선택해 주세요.';bank.before(selection);
-  // The original drawBank replaces every chip. Restore focus to the new matching chip.
-  bank.addEventListener('click',event=>{const chip=event.target.closest('.chip');if(!chip||!bank.contains(chip))return;const value=chip.textContent;const replacement=[...bank.querySelectorAll('.chip')].find(item=>item.textContent===value);selection.textContent=`선택한 답: ${value}. 원하는 빈칸을 누르세요.`;replacement?.focus();});
+  // The original click handler redraws all chips before this bubbling listener runs.
+  // event.target is the detached original chip, so bank.contains(event.target) is false.
+  bank.addEventListener('click',event=>{const chip=event.target.closest('.chip');if(!chip)return;const value=chip.textContent;const replacement=[...bank.querySelectorAll('.chip')].find(item=>item.textContent===value);if(!replacement)return;selection.textContent=`선택한 답: ${value}. 원하는 빈칸을 누르세요.`;replacement.focus();});
   reset?.addEventListener('click',()=>{selection.textContent='답 카드를 선택해 주세요.'});
   reveal?.addEventListener('click',()=>{selection.textContent='완성 지도를 보는 중입니다. 다시 도전하면 직접 풀 수 있어요.'});
  }
