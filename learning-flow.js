@@ -13,6 +13,14 @@ if(isMap){
  if(result&&!document.getElementById('mapNextStep')){const next=document.createElement('div');next.id='mapNextStep';next.setAttribute('aria-live','polite');next.style.cssText='margin-top:15px;padding:16px;border-radius:14px;background:#f0f9ef';result.insertAdjacentElement('afterend',next);
  let revealed=false;
  const show=()=>{next.replaceChildren();const p=document.createElement('p');if(getDone()){p.textContent='🎉 관계 지도 학습을 완료했어요! 이제 10문제 최종 미션에 도전해 보세요.';next.append(p,makeLink('🏆 최종 미션으로 이동 →','master-mission.html'));}else{p.textContent=revealed?'완성 지도를 확인했어요. 직접 풀어 완료하려면 다시 도전을 누른 뒤 답을 채우고 정답 확인을 눌러 주세요.':'답 카드를 모두 채우고 정답 확인을 눌러 보세요. 완성 지도 보기는 복습용이며 학습 완료로 기록되지 않습니다.';next.append(p)}};
+ const bank=document.getElementById('bank');
+ if(bank){
+  const selection=document.createElement('p');selection.id='mapSelectionStatus';selection.setAttribute('role','status');selection.setAttribute('aria-live','polite');selection.textContent='답 카드를 선택해 주세요.';bank.before(selection);
+  // The original drawBank replaces every chip. Restore focus to the new matching chip.
+  bank.addEventListener('click',event=>{const chip=event.target.closest('.chip');if(!chip||!bank.contains(chip))return;const value=chip.textContent;const replacement=[...bank.querySelectorAll('.chip')].find(item=>item.textContent===value);selection.textContent=`선택한 답: ${value}. 원하는 빈칸을 누르세요.`;replacement?.focus();});
+  reset?.addEventListener('click',()=>{selection.textContent='답 카드를 선택해 주세요.'});
+  reveal?.addEventListener('click',()=>{selection.textContent='완성 지도를 보는 중입니다. 다시 도전하면 직접 풀 수 있어요.'});
+ }
  check?.addEventListener('click',()=>{const blanks=[...document.querySelectorAll('.blank')];if(revealed){result.textContent='📚 완성 지도 보기는 복습용이에요. 학습 완료를 기록하려면 다시 도전한 뒤 직접 답을 채워 주세요.';}else if(blanks.length&&blanks.every(b=>b.dataset.value===b.dataset.answer)){setDone();}show()});
  reveal?.addEventListener('click',()=>{revealed=true;show()});
  reset?.addEventListener('click',()=>{revealed=false;show()});
