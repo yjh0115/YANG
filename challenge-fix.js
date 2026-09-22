@@ -10,9 +10,13 @@ const tasks=[
  {q:'다음 설명 중 항상 옳은 것을 고르세요.',opts:['모든 직사각형은 정사각형이다','모든 마름모는 직사각형이다','모든 정사각형은 직사각형이면서 마름모이다','모든 사다리꼴은 정사각형이다'],answer:2,why:'정사각형은 네 각이 직각이고 네 변의 길이가 같으므로 직사각형과 마름모의 성질을 모두 가져요.'}
 ];
 const attempted=new Set();
+const answers=new Map();
 const attemptKey=id=>`quad-lab-challenge-attempt-${id}`;
+const answerKey=id=>`quad-lab-challenge-answer-${id}`;
 const hasAttempt=id=>{if(attempted.has(id))return true;try{return sessionStorage.getItem(attemptKey(id))==='yes'}catch{return false}};
 const recordAttempt=id=>{attempted.add(id);try{sessionStorage.setItem(attemptKey(id),'yes')}catch{}};
+const readAnswer=id=>{if(answers.has(id))return answers.get(id);try{const raw=sessionStorage.getItem(answerKey(id));return raw===null?null:Number(raw)}catch{return null}};
+const recordAnswer=(id,index)=>{answers.set(id,index);try{sessionStorage.setItem(answerKey(id),String(index))}catch{}};
 const isCompleted=id=>state.completed.includes(id);
 const original=renderQuiz;
 renderQuiz=function(area,lesson,challenge){
@@ -20,15 +24,19 @@ renderQuiz=function(area,lesson,challenge){
  const lessonId=lesson.id,task=tasks[current],previouslyAttempted=hasAttempt(lessonId);
  if(previouslyAttempted)area.dataset.challengeAttempted='yes';else delete area.dataset.challengeAttempted;
  document.getElementById('nextStep').innerHTML='학습 마치기 <span>→</span>';
- area.innerHTML=`<div class="practice-card"><span class="eyebrow dark">CHALLENGE · 생각 넓히기</span><h3>${task.q}</h3><div class="quiz-options">${task.opts.map((option,i)=>`<button type="button" data-reason-answer="${i}">${i+1}. ${option}</button>`).join('')}</div><div id="quizFeedback" role="status" aria-live="polite"></div><div class="hint-row"><button type="button" class="hint-btn" id="reasonHint">힌트 보기</button><button type="button" class="hint-btn" id="reasonExplain" hidden>정답과 해설 확인</button></div></div>`;
+ area.innerHTML=`<div class="practice-card"><span class="eyebrow dark">CHALLENGE · 생각 넓히기</span><h3>${task.q}</h3><div class="quiz-options">${task.opts.map((option,i)=>`<button type="button" data-reason-answer="${i}" aria-pressed="false">${i+1}. ${option}</button>`).join('')}</div><div id="quizFeedback" role="status" aria-live="polite"></div><div class="hint-row"><button type="button" class="hint-btn" id="reasonHint">힌트 보기</button><button type="button" class="hint-btn" id="reasonExplain" hidden>정답과 해설 확인</button></div></div>`;
  const feedback=area.querySelector('#quizFeedback'),explain=area.querySelector('#reasonExplain');
+ const buttons=[...area.querySelectorAll('[data-reason-answer]')];
  const showExplanation=()=>{feedback.textContent=`정답: ${task.answer+1}번 ${task.opts[task.answer]}. ${task.why}`;explain.hidden=true;};
- if(isCompleted(lessonId))feedback.textContent='이미 완료한 탐구예요. 다시 풀거나 학습 완료 화면으로 이동할 수 있어요.';
+ const select=index=>{buttons.forEach(button=>{const chosen=Number(button.dataset.reasonAnswer)===index;button.setAttribute('aria-pressed',String(chosen));button.classList.toggle('selected',chosen)});};
+ const previous=readAnswer(lessonId);
+ if(previous!==null&&Number.isInteger(previous)&&previous>=0&&previous<task.opts.length){select(previous);const ok=previous===task.answer;feedback.textContent=ok?'이전에 선택한 정답이에요! '+task.why:'이전에 선택한 답이 남아 있어요. 다시 풀거나 해설을 확인할 수 있어요.';explain.hidden=ok;}
+ else if(isCompleted(lessonId))feedback.textContent='이미 완료한 탐구예요. 다시 풀거나 학습 완료 화면으로 이동할 수 있어요.';
  else if(previouslyAttempted)feedback.textContent='이전에 답을 선택한 기록이 있어요. 다시 풀거나 학습 마치기를 눌러도 됩니다.';
- explain.hidden=!(previouslyAttempted||isCompleted(lessonId));
- area.querySelectorAll('[data-reason-answer]').forEach(button=>button.onclick=()=>{
-  recordAttempt(lessonId);area.dataset.challengeAttempted='yes';
-  const ok=Number(button.dataset.reasonAnswer)===task.answer;
+ if(previous===null)explain.hidden=!(previouslyAttempted||isCompleted(lessonId));
+ buttons.forEach(button=>button.onclick=()=>{
+  const index=Number(button.dataset.reasonAnswer);recordAttempt(lessonId);recordAnswer(lessonId,index);area.dataset.challengeAttempted='yes';select(index);
+  const ok=index===task.answer;
   feedback.textContent=ok?'정답이에요! '+task.why:'아직 정답이 아니에요. 힌트를 보고 다시 풀거나, 정답과 해설을 확인한 뒤 학습을 마칠 수 있어요.';
   explain.hidden=ok;
  });
