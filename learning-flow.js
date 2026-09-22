@@ -9,6 +9,14 @@ const getDone=()=>{try{return localStorage.getItem(KEY)==='yes'}catch{return fal
 const setDone=()=>{try{localStorage.setItem(KEY,'yes')}catch{}};
 const makeLink=(text,href)=>{const a=document.createElement('a');a.href=href;a.textContent=text;a.className='primary';a.style.cssText='display:inline-block;text-decoration:none;text-align:center;padding:13px 20px;margin:12px 8px 0 0';return a};
 if(isMap){
+ // Add four corner markers to the top square, leaving the separately frozen diagonal SVG untouched.
+ const square=document.querySelector('.map .shape.square');
+ if(square&&!square.querySelector('.corner-square')){
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 120 120');svg.setAttribute('role','img');svg.setAttribute('aria-label','네 꼭짓점에 직각 표시가 있고 네 변에 같은 길이 표시가 있는 정사각형');svg.setAttribute('class','corner-square');svg.style.cssText='display:block;width:112px;max-width:100%;margin:8px auto 4px';
+  svg.innerHTML='<rect x="15" y="15" width="90" height="90" fill="#fff" stroke="#493259" stroke-width="2.5"/><path d="M15 27H27V15M93 15V27H105M105 93H93V105M27 105V93H15" fill="none" stroke="#493259" stroke-width="2"/><path d="M60 10V20M100 60H110M60 100V110M10 60H20" fill="none" stroke="#d45483" stroke-width="2.5"/>';
+  square.append(svg);
+ }
  const result=document.getElementById('result'),check=document.getElementById('check'),reveal=document.getElementById('reveal'),reset=document.getElementById('reset');
  if(result&&!document.getElementById('mapNextStep')){const next=document.createElement('div');next.id='mapNextStep';next.setAttribute('aria-live','polite');next.style.cssText='margin-top:15px;padding:16px;border-radius:14px;background:#f0f9ef';result.insertAdjacentElement('afterend',next);
  let revealed=false;
